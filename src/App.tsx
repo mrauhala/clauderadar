@@ -8,6 +8,9 @@ import ImageWMS from 'ol/source/ImageWMS';
 import { defaults as defaultControls } from 'ol/control';
 import { transform } from 'ol/proj';
 import { format } from 'date-fns';
+import { defaults as defaultInteractions } from 'ol/interaction';
+import KeyboardPan from 'ol/interaction/KeyboardPan';
+import KeyboardZoom from 'ol/interaction/KeyboardZoom';
 import { parseWMSCapabilities } from './utils/wmsParser';
 import Toolbar from './components/Toolbar';
 import Timeline from './components/Timeline';
@@ -69,6 +72,10 @@ export default function App() {
       target: mapRef.current,
       layers: [baseLayer, radarLayer, referenceLayer],
       controls: defaultControls(),
+      interactions: defaultInteractions().extend([
+        new KeyboardPan(),
+        new KeyboardZoom()
+      ]),
       view: new View({
         center: transform([25, 65], 'EPSG:4326', 'EPSG:3857'),
         zoom: 6,
@@ -77,6 +84,11 @@ export default function App() {
 
     mapInstanceRef.current = initialMap;
     setMap(initialMap);
+
+    // Focus on the map container
+    if (mapRef.current) {
+      mapRef.current.focus();
+    }
 
     return () => {
       initialMap.setTarget(undefined);
@@ -139,6 +151,11 @@ export default function App() {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Only handle our custom shortcuts if the map container is not focused
+      if (document.activeElement === mapRef.current) {
+        return;
+      }
+
       if (e.ctrlKey) {
         setShowKeyboardHelp(true);
       }
@@ -167,7 +184,11 @@ export default function App() {
 
   return (
     <div className="app">
-      <div ref={mapRef} className="map-container" />
+      <div 
+        ref={mapRef} 
+        className="map-container" 
+        tabIndex={0} // Make the map container focusable
+      />
       <Toolbar
         settings={settings}
         onSettingsChange={setSettings}
@@ -186,4 +207,3 @@ export default function App() {
     </div>
   );
 }
-

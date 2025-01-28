@@ -10,11 +10,11 @@ export default function KeyboardHelp() {
           <span>Play/Pause Animation</span>
         </div>
         <div className="shortcut">
-          <kbd></kbd>
+          <kbd>,</kbd>
           <span>Previous Frame</span>
         </div>
         <div className="shortcut">
-          <kbd></kbd>
+          <kbd>.</kbd>
           <span>Next Frame</span>
         </div>
         <div className="shortcut">
@@ -42,19 +42,18 @@ export default function KeyboardHelp() {
           <span>Toggle Observations</span>
         </div>
         <div className="shortcut">
-          <kbd>+</kbd>
-          <span>Zoom In</span>
+          <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd>
+          <span>Pan Map</span>
         </div>
         <div className="shortcut">
-          <kbd>-</kbd>
-          <span>Zoom Out</span>
+          <kbd>+</kbd><kbd>-</kbd>
+          <span>Zoom Map</span>
         </div>
         <div className="shortcut">
           <kbd>Ctrl</kbd>
-          <span>Show/Hide This Help</span>
+          <span>Show This Help</span>
         </div>
       </div>
     </div>
   );
 }
-
