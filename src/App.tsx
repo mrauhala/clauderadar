@@ -71,7 +71,9 @@ export default function App() {
     const initialMap = new Map({
       target: mapRef.current,
       layers: [baseLayer, radarLayer, referenceLayer],
-      controls: defaultControls(),
+      controls: defaultControls({
+        zoom: false
+      }),
       interactions: defaultInteractions().extend([
         new KeyboardPan(),
         new KeyboardZoom()
