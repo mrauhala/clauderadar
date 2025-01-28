@@ -1,0 +1,42 @@
+.toolbar {
+  position: absolute;
+  z-index: 1000;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
+}
+
+.toolbar.top {
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.toolbar-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.toolbar-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.toolbar-button.active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 600px) {
+  .toolbar-button {
+    font-size: 16px;
+    padding: 6px;
+  }
+}
+

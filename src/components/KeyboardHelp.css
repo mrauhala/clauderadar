@@ -1,0 +1,53 @@
+.keyboard-help {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 24px;
+  border-radius: 8px;
+  z-index: 2000;
+  max-width: 600px;
+  width: 90%;
+}
+
+.keyboard-help h2 {
+  margin: 0 0 16px;
+  text-align: center;
+  font-size: 24px;
+}
+
+.shortcuts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.shortcut {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+kbd {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-family: monospace;
+  font-size: 14px;
+  min-width: 24px;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .keyboard-help {
+    padding: 16px;
+  }
+
+  .shortcuts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
