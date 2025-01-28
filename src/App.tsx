@@ -151,19 +151,61 @@ export default function App() {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Only handle our custom shortcuts if the map container is not focused
-      if (document.activeElement === mapRef.current) {
-        return;
-      }
-
+      // Always show help when Ctrl is pressed
       if (e.ctrlKey) {
         setShowKeyboardHelp(true);
       }
 
-      // Add other keyboard shortcuts here
-      if (e.key === ' ') {
-        e.preventDefault();
-        setIsPlaying(prev => !prev);
+      // Handle application shortcuts regardless of focus
+      // Handle frame navigation
+      if (e.key === ',' || e.key === '<') {
+        const currentIndex = availableTimes.indexOf(currentTime);
+        if (currentIndex > 0) {
+          setCurrentTime(availableTimes[currentIndex - 1]);
+        }
+        return;
+      }
+      if (e.key === '.' || e.key === '>') {
+        const currentIndex = availableTimes.indexOf(currentTime);
+        if (currentIndex < availableTimes.length - 1) {
+          setCurrentTime(availableTimes[currentIndex + 1]);
+        }
+        return;
+      }
+
+      switch (e.key) {
+        case ' ':
+          e.preventDefault();
+          setIsPlaying(prev => !prev);
+          break;
+        case 'g':
+        case 'G':
+          setSettings(prev => ({ ...prev, showGeolocation: !prev.showGeolocation }));
+          break;
+        case 's':
+        case 'S':
+          setSettings(prev => ({ ...prev, showSatellite: !prev.showSatellite }));
+          break;
+        case 'r':
+        case 'R':
+          setSettings(prev => ({ ...prev, showRadar: !prev.showRadar }));
+          break;
+        case 'l':
+        case 'L':
+          setSettings(prev => ({ ...prev, showLightning: !prev.showLightning }));
+          break;
+        case 'o':
+        case 'O':
+          setSettings(prev => ({ ...prev, showObservations: !prev.showObservations }));
+          break;
+        case 'a':
+        case 'A':
+          setSpeed(prev => {
+            const speeds = [500, 1000, 2000];
+            const currentIndex = speeds.indexOf(prev);
+            return speeds[(currentIndex + 1) % speeds.length];
+          });
+          break;
       }
     };
 
@@ -180,7 +222,7 @@ export default function App() {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, []);
+  }, [setSettings, speed, availableTimes, currentTime]);
 
   return (
     <div className="app">
