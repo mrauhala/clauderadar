@@ -7,7 +7,6 @@ import XYZ from 'ol/source/XYZ';
 import ImageWMS from 'ol/source/ImageWMS';
 import { defaults as defaultControls } from 'ol/control';
 import { transform } from 'ol/proj';
-import { format } from 'date-fns';
 import { defaults as defaultInteractions } from 'ol/interaction';
 import KeyboardPan from 'ol/interaction/KeyboardPan';
 import KeyboardZoom from 'ol/interaction/KeyboardZoom';
@@ -23,6 +22,22 @@ const WMS_URL = 'https://openwms.fmi.fi/geoserver/wms';
 const RADAR_LAYER = 'Radar:suomi_dbz_eureffin';
 const UPDATE_INTERVAL = 60000; // 1 minute
 
+interface Settings {
+  showGeolocation: boolean;
+  showSatellite: boolean;
+  showRadar: boolean;
+  showLightning: boolean;
+  showObservations: boolean;
+}
+
+const defaultSettings: Settings = {
+  showGeolocation: false,
+  showSatellite: true,
+  showRadar: true,
+  showLightning: false,
+  showObservations: false,
+};
+
 export default function App() {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<Map | null>(null);
@@ -33,13 +48,7 @@ export default function App() {
   const [speed, setSpeed] = useState(1000);
   const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
   
-  const [settings, setSettings] = useLocalStorage('radar-settings', {
-    showGeolocation: false,
-    showSatellite: true,
-    showRadar: true,
-    showLightning: false,
-    showObservations: false,
-  });
+  const [settings, setSettings] = useLocalStorage<Settings>('radar-settings', defaultSettings);
 
   // Initialize map
   useEffect(() => {
@@ -125,11 +134,13 @@ export default function App() {
 
     const radarLayer = map.getLayers().getArray().find(layer => 
       layer instanceof ImageLayer
-    ) as ImageLayer<ImageWMS>;
+    ) as ImageLayer<ImageWMS> | undefined;
 
     if (radarLayer) {
       const source = radarLayer.getSource();
-      source.updateParams({ 'TIME': currentTime });
+      if (source) {
+        source.updateParams({ 'TIME': currentTime });
+      }
     }
   }, [map, currentTime]);
 
@@ -158,7 +169,6 @@ export default function App() {
         setShowKeyboardHelp(true);
       }
 
-      // Handle application shortcuts regardless of focus
       // Handle frame navigation
       if (e.key === ',' || e.key === '<') {
         const currentIndex = availableTimes.indexOf(currentTime);
@@ -180,25 +190,25 @@ export default function App() {
           e.preventDefault();
           setIsPlaying(prev => !prev);
           break;
-        case 'g':
+                  case 'g':
         case 'G':
-          setSettings(prev => ({ ...prev, showGeolocation: !prev.showGeolocation }));
+          setSettings((prev: Settings) => ({ ...prev, showGeolocation: !prev.showGeolocation }));
           break;
         case 's':
         case 'S':
-          setSettings(prev => ({ ...prev, showSatellite: !prev.showSatellite }));
+          setSettings((prev: Settings) => ({ ...prev, showSatellite: !prev.showSatellite }));
           break;
         case 'r':
         case 'R':
-          setSettings(prev => ({ ...prev, showRadar: !prev.showRadar }));
+          setSettings((prev: Settings) => ({ ...prev, showRadar: !prev.showRadar }));
           break;
         case 'l':
         case 'L':
-          setSettings(prev => ({ ...prev, showLightning: !prev.showLightning }));
+          setSettings((prev: Settings) => ({ ...prev, showLightning: !prev.showLightning }));
           break;
         case 'o':
         case 'O':
-          setSettings(prev => ({ ...prev, showObservations: !prev.showObservations }));
+          setSettings((prev: Settings) => ({ ...prev, showObservations: !prev.showObservations }));
           break;
         case 'a':
         case 'A':
@@ -231,7 +241,7 @@ export default function App() {
       <div 
         ref={mapRef} 
         className="map-container" 
-        tabIndex={0} // Make the map container focusable
+        tabIndex={0}
       />
       <Toolbar
         settings={settings}
